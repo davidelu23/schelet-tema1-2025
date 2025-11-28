@@ -1,4 +1,4 @@
-package main.plant;
+package main.entity.plant;
 
 public enum Maturity {
     Young(0.4),

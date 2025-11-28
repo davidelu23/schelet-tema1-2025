@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import fileio.InputLoader;
+import main.simulation.Simulation;
+import main.simulation.SimulationManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,23 +32,7 @@ public final class Main {
         InputLoader inputLoader = new InputLoader(inputPath);
         ArrayNode output = MAPPER.createArrayNode();
 
-        /*
-         * TODO Implement your function here
-         *
-         * How to add output to the output array?
-         * There are multiple ways to do this, here is one example:
-         *
-         *
-         * ObjectNode objectNode = MAPPER.createObjectNode();
-         * objectNode.put("field_name", "field_value");
-         *
-         * ArrayNode arrayNode = MAPPER.createArrayNode();
-         * arrayNode.add(objectNode);
-         *
-         * output.add(arrayNode);
-         * output.add(objectNode);
-         *
-         */
+        new SimulationManager(MAPPER).run(inputLoader, output);
 
         File outputFile = new File(outputPath);
         outputFile.getParentFile().mkdirs();

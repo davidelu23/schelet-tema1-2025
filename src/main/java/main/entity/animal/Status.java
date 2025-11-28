@@ -1,4 +1,4 @@
-package main.animal;
+package main.entity.animal;
 
 public enum Status {
     hungry(0),

@@ -19,12 +19,14 @@ import java.util.List;
 public final class InputLoader {
     private final ArrayList<SimulationInput> simulations;
     private final ArrayList<CommandInput> commands;
+    private final int simCount;
 
     public InputLoader(final String filePath) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         InputRoot root = mapper.readValue(new File(filePath), InputRoot.class);
         this.simulations = new ArrayList<>(root.simulationParams);
         this.commands = new ArrayList<>(root.commands);
+        this.simCount = simulations.size();
     }
 
     // Helper class for root deserialization
