@@ -3,7 +3,7 @@ package main.entity.soil.types;
 import main.entity.Hazardous;
 import main.entity.soil.Soil;
 
-public class DesertSoil extends Soil implements Hazardous {
+public class DesertSoil extends Soil {
     private final double salinity;
 
     public DesertSoil(String name, double mass, double nitrogen, double waterRetention,

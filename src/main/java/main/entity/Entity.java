@@ -5,11 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public abstract class Entity {
     private String name;
     private double mass;
-    private boolean isScanned = false;
+    private boolean isScanned;
 
     public Entity(String name, double mass) {
         this.name = name;
         this.mass = mass;
+        isScanned = false;
     }
 
     public final String getName() {
@@ -27,6 +28,10 @@ public abstract class Entity {
     @JsonIgnore
     public boolean isScanned() {
         return isScanned;
+    }
+
+    public final void scan() {
+        isScanned = true;
     }
 
     public void perish() {

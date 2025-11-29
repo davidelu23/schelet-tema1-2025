@@ -72,8 +72,12 @@ public abstract class Air extends Entity {
     }
 
     @JsonIgnore
+    public double getToxicityAQ() {
+        return 100 * (1 - getScore()/maxScore);
+    }
+
+    @JsonIgnore
     public boolean isToxic() {
-        double toxicityAQ = normalizeScore(getScore());
-        return toxicityAQ > (0.8 * maxScore);
+        return getToxicityAQ() > (0.8 * maxScore);
     }
 }

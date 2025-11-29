@@ -15,7 +15,7 @@ import main.entity.plant.types.*;
         @JsonSubTypes.Type(value = Algae.class, name = "Algae"),
         @JsonSubTypes.Type(value = Fern.class, name = "Ferns"),
         @JsonSubTypes.Type(value = FloweringPlant.class, name = "FloweringPlants"),
-        @JsonSubTypes.Type(value = Gymnosperm.class, name = "Gymnosperms"),
+        @JsonSubTypes.Type(value = GymnospermPlants.class, name = "GymnospermsPlants"),
         @JsonSubTypes.Type(value = Moss.class, name = "Mosses")
 })
 public abstract class Plant extends Entity implements Hazardous {

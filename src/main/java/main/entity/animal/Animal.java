@@ -3,11 +3,14 @@ package main.entity.animal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import fileio.PairInput;
+import fileio.SimulationInput;
 import main.entity.Entity;
 import main.entity.Hazardous;
 import main.entity.plant.Plant;
 import main.entity.animal.types.*;
 import main.entity.water.Water;
+import main.simulation.Simulation;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -23,10 +26,13 @@ import main.entity.water.Water;
 public abstract class Animal extends Entity implements Hazardous {
     private Status status = Status.hungry;
     private double attackProbability;
+    private PairInput position;
+    private double fertilizer;
 
     public Animal(String name, double mass, double attackProbability) {
         super(name, mass);
         this.attackProbability = attackProbability;
+        this.fertilizer = 0;
     }
 
     @JsonIgnore
@@ -34,16 +40,135 @@ public abstract class Animal extends Entity implements Hazardous {
         return (100 - attackProbability) / 10.0;
     }
 
-    public void eatAnimal(Animal animal) {
-        this.status = Status.wellFed;
-        this.setMass(this.getMass() + animal.getMass());
-        animal.perish();
+    @JsonIgnore
+    public final PairInput getPosition() {
+        return position;
     }
 
-    public void eatPlant(Plant plant) {
-        this.status = Status.wellFed;
-        this.setMass(this.getMass() + plant.getMass());
-        plant.perish();
+    @JsonIgnore
+    public final Status getStatus() {
+        return status;
+    }
+
+    @JsonIgnore
+    public final double getFertilizer() {
+        return fertilizer;
+    }
+
+    public final void setFertilizer(double fertilizer) {
+        this.fertilizer = fertilizer;
+    }
+
+    public final void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public final void setPosition(PairInput position) {
+        this.position = position;
+    }
+
+    public abstract void roam(Simulation simulation);
+
+    public PairInput findBestAnimal(Simulation simulation) {
+        int[] idx = {0, 1, 0, -1};
+        int[] idy = {1, 0, -1, 0};
+        PairInput move = new PairInput();
+        for (int i = 0; i < 4; i++) {
+            int x = position.getX() + idx[i];
+            int y = position.getY() + idy[i];
+            if (x < 0 || x >= simulation.getTerritory().getWidth()) {
+                continue;
+            }
+            if (y < 0 || y >= simulation.getTerritory().getHeight()) {
+                continue;
+            }
+            if (simulation.getTerritory().getAnimalAt(x, y) != null) {
+                move.setX(x);
+                move.setY(y);
+                return move;
+            }
+        }
+        return null;
+    }
+
+    public PairInput findBestWaterAndPlant(Simulation simulation) {
+        int[] idx = {0, 1, 0, -1};
+        int[] idy = {1, 0, -1, 0};
+        PairInput move = new PairInput();
+        double bestScore = -1;
+        for (int i = 0; i < 4; i++) {
+            int x = position.getX() + idx[i];
+            int y = position.getY() + idy[i];
+            if (x < 0 || x >= simulation.getTerritory().getWidth()) {
+                continue;
+            }
+            if (y < 0 || y >= simulation.getTerritory().getHeight()) {
+                continue;
+            }
+            if (simulation.getTerritory().getWaterAt(x, y) != null && simulation.getTerritory().getPlantAt(x, y) != null) {
+                double score = simulation.getTerritory().getWaterAt(x, y).getWaterQuality();
+                if (score > bestScore) {
+                    bestScore = score;
+                    move.setX(x);
+                    move.setY(y);
+                }
+            }
+        }
+        if (bestScore >= 0) {
+            return move;
+        }
+        return null;
+    }
+
+    public PairInput findBestWater(Simulation simulation) {
+        int[] idx = {0, 1, 0, -1};
+        int[] idy = {1, 0, -1, 0};
+        PairInput move = new PairInput();
+        double bestScore = -1;
+        for (int i = 0; i < 4; i++) {
+            int x = position.getX() + idx[i];
+            int y = position.getY() + idy[i];
+            if (x < 0 || x >= simulation.getTerritory().getWidth()) {
+                continue;
+            }
+            if (y < 0 || y >= simulation.getTerritory().getHeight()) {
+                continue;
+            }
+            if (simulation.getTerritory().getWaterAt(x, y) != null) {
+                double score = simulation.getTerritory().getWaterAt(x, y).getWaterQuality();
+                if (score > bestScore) {
+                    bestScore = score;
+                    move.setX(x);
+                    move.setY(y);
+                }
+            }
+        }
+        if (bestScore >= 0) {
+            return move;
+        }
+        return null;
+    }
+
+    public PairInput findBestPlant(Simulation simulation) {
+        int[] idx = {0, 1, 0, -1};
+        int[] idy = {1, 0, -1, 0};
+        PairInput move = new PairInput();
+        for (int i = 0; i < 4; i++) {
+            int x = position.getX() + idx[i];
+            int y = position.getY() + idy[i];
+            if (x < 0 || x >= simulation.getTerritory().getWidth()) {
+                continue;
+            }
+            if (y < 0 || y >= simulation.getTerritory().getHeight()) {
+                continue;
+            }
+            if (simulation.getTerritory().getPlantAt(x, y) != null) {
+                move.setX(x);
+                move.setY(y);
+                return move;
+            }
+        }
+        return null;
     }
 
     public void drinkWater(Water water) {
@@ -53,4 +178,6 @@ public abstract class Animal extends Entity implements Hazardous {
         this.setMass(this.getMass() + waterToDrink);
         this.status = Status.wellFed;
     }
+
+
 }

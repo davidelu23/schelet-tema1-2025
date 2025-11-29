@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import main.entity.Entity;
+import main.entity.Hazardous;
 import main.entity.soil.types.ForestSoil;
 import main.entity.soil.types.GrasslandSoil;
 import main.entity.soil.types.SwampSoil;
@@ -23,7 +24,7 @@ import main.entity.soil.types.DesertSoil;
         @JsonSubTypes.Type(value = DesertSoil.class, name = "DesertSoil"),
         @JsonSubTypes.Type(value = GrasslandSoil.class, name = "GrasslandSoil")
 })
-public abstract class Soil extends Entity {
+public abstract class Soil extends Entity implements Hazardous {
     private final double nitrogen;
     private final double waterRetention;
     private final double soilpH;
@@ -59,6 +60,10 @@ public abstract class Soil extends Entity {
 
     public double getOrganicMatter() {
         return organicMatter;
+    }
+
+    public final void setOrganicMatter(double organicMatter) {
+        this.organicMatter = organicMatter;
     }
 
     @JsonProperty("soilQuality")

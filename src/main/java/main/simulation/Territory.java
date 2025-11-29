@@ -22,14 +22,14 @@ public class Territory {
     private Water[][] water;
     private Air[][] air;
 
-    public Territory(TerritorySectionParamsInput territorySectionParams, int width, int height) {
+    public Territory(TerritorySectionParamsInput territorySectionParams, int height, int width) {
         this.width = width;
         this.height = height;
-        this.plants = new Plant[width][height];
-        this.animals = new Animal[width][height];
-        this.soil = new Soil[width][height];
-        this.water = new Water[width][height];
-        this.air = new Air[width][height];
+        this.plants = new Plant[height][width];
+        this.animals = new Animal[height][width];
+        this.soil = new Soil[height][width];
+        this.water = new Water[height][width];
+        this.air = new Air[height][width];
 
         initializeSoil(this, territorySectionParams.getSoil());
         initializePlants(this, territorySectionParams.getPlants());
@@ -62,7 +62,7 @@ public class Territory {
         if (plantInputs == null) return;
         for (PlantInput plantInput : plantInputs) {
             Plant plant = switch (plantInput.getType()) {
-                case "Gymnosperms" -> new Gymnosperm(plantInput.getName(), plantInput.getMass());
+                case "GymnospermsPlants" -> new GymnospermPlants(plantInput.getName(), plantInput.getMass());
                 case "FloweringPlants" -> new FloweringPlant(plantInput.getName(), plantInput.getMass());
                 case "Ferns" -> new Fern(plantInput.getName(), plantInput.getMass());
                 case "Algae" -> new Algae(plantInput.getName(), plantInput.getMass());
@@ -93,6 +93,7 @@ public class Territory {
             if (animal != null) {
                 for (PairInput pairInput : animalInput.getSections()) {
                     territory.addAnimal(animal, pairInput.getX(), pairInput.getY());
+                    animal.setPosition(pairInput);
                 }
             }
         }
@@ -131,52 +132,52 @@ public class Territory {
 
     public void addSoil(Soil soil, int x, int y) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
-            this.soil[x][y] = soil;
+            this.soil[y][x] = soil;
         }
     }
 
     public void addWater(Water water, int x, int y) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
-            this.water[x][y] = water;
+            this.water[y][x] = water;
         }
     }
 
     public void addAir(Air air, int x, int y) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
-            this.air[x][y] = air;
+            this.air[y][x] = air;
         }
     }
 
     public void addPlant(Plant plant, int x, int y) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
-            plants[x][y] = plant;
+            plants[y][x] = plant;
         }
     }
 
     public void addAnimal(Animal animal, int x, int y) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
-            animals[x][y] = animal;
+            animals[y][x] = animal;
         }
     }
 
     public Plant getPlantAt(int x, int y) {
-        return plants[x][y];
+        return plants[y][x];
     }
 
     public Animal getAnimalAt(int x, int y) {
-        return animals[x][y];
+        return animals[y][x];
     }
 
     public Soil getSoilAt(int x, int y) {
-        return soil[x][y];
+        return soil[y][x];
     }
 
     public Water getWaterAt(int x, int y) {
-        return water[x][y];
+        return water[y][x];
     }
 
     public Air getAirAt(int x, int y) {
-        return air[x][y];
+        return air[y][x];
     }
 
     public final int getWidth() {
