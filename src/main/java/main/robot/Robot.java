@@ -1,7 +1,6 @@
 package main.robot;
 
 import fileio.PairInput;
-import main.entity.Entity;
 import main.entity.air.Air;
 import main.entity.animal.Animal;
 import main.entity.plant.Plant;
@@ -9,20 +8,23 @@ import main.entity.soil.Soil;
 import main.entity.water.Water;
 import main.simulation.Simulation;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Robot {
+public final class Robot {
     private PairInput position;
     private int energy;
     private int timeToCharge;
-    private final static int scanEnergyCost = 7;
+    private static final int SCAN_ENERGY_COST = 7;
+    private static final int LEARN_FACT_COST = 2;
+    private static final int MAX_SCORE = 1_000_000_000;
+    private static final int DIRECTIONS = 4;
+
     private List<Plant> plantInventory;
     private List<Animal> animalInventory;
     private List<Water> waterInventory;
 
-    public Robot(int energy) {
+    public Robot(final int energy) {
         position = new PairInput();
         this.energy = energy;
         timeToCharge = 0;
@@ -31,64 +33,89 @@ public class Robot {
         waterInventory = new ArrayList<>();
     }
 
-    public final PairInput getPosition() {
+    public PairInput getPosition() {
         return position;
     }
 
-    public final int getEnergy() {
+    public int getEnergy() {
         return energy;
     }
 
-    public final void setEnergy(int energy) {
+    public void setEnergy(final int energy) {
         this.energy = energy;
     }
 
-    public final void setTimeToCharge(int timeToCharge) {
+    public void setTimeToCharge(final int timeToCharge) {
         this.timeToCharge = Math.max(timeToCharge, 0);
     }
 
-    public final int getTimeToCharge() {
+    public int getTimeToCharge() {
         return timeToCharge;
     }
 
     public static int getScanCost() {
-        return scanEnergyCost;
+        return SCAN_ENERGY_COST;
     }
 
-    public final List<Plant> getPlantInventory() {
+    public static int getLearnCost() {
+        return LEARN_FACT_COST;
+    }
+
+    public List<Plant> getPlantInventory() {
         return plantInventory;
     }
 
-    public void addToPlantInventory(Plant plant) {
+    /**
+     * Adds a plant to the robot's inventory.
+     * @param plant The plant to add.
+     */
+    public void addToPlantInventory(final Plant plant) {
         plantInventory.add(plant);
     }
 
-    public final List<Animal> getAnimalInventory() {
+    public List<Animal> getAnimalInventory() {
         return animalInventory;
     }
 
-    public void addToAnimalInventory(Animal animal) {
+    /**
+     * Adds an animal to the robot's inventory.
+     * @param animal The animal to add.
+     */
+    public void addToAnimalInventory(final Animal animal) {
         animalInventory.add(animal);
     }
 
-    public final List<Water> getWaterInventory() {
+    public List<Water> getWaterInventory() {
         return waterInventory;
     }
 
-    public void addToWaterInventory(Water water) {
+    /**
+     * Adds a water source to the robot's inventory.
+     * @param water The water source to add.
+     */
+    public void addToWaterInventory(final Water water) {
         waterInventory.add(water);
     }
 
-    public void moveToPosition(PairInput position) {
-        this.position = position;
+    /**
+     * Moves the robot to a new position.
+     * @param newPosition The target position.
+     */
+    public void moveToPosition(final PairInput newPosition) {
+        this.position = newPosition;
     }
 
-    public Move findBestMove(Simulation simulation) {
+    /**
+     * Finds the best move for the robot based on the surrounding environment.
+     * @param simulation The current state of the simulation.
+     * @return The best move to make.
+     */
+    public Move findBestMove(final Simulation simulation) {
         int[] idx = {0, 1, 0, -1};
         int[] idy = {1, 0, -1, 0};
-        int bestScore = 1000000000;
+        int bestScore = MAX_SCORE;
         PairInput move = new PairInput();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < DIRECTIONS; i++) {
             int x = position.getX() + idx[i];
             int y = position.getY() + idy[i];
             if (x < 0 || x >= simulation.getTerritory().getWidth()) {

@@ -8,7 +8,7 @@ public enum Maturity {
 
     private final double maturity;
 
-    Maturity(double maturity) {
+    Maturity(final double maturity) {
         this.maturity = maturity;
     }
 

@@ -4,21 +4,32 @@ import fileio.PairInput;
 import main.entity.animal.Animal;
 import main.simulation.Simulation;
 
-public class Detritivore extends Animal {
-    public Detritivore(String name, double mass) {
-        double attackProbability = 90;
-        super(name, mass, attackProbability);
+public final class Detritivore extends Animal {
+    private static final int ATTACK_PROBABILITY = 90;
+
+    public Detritivore(final String name, final double mass) {
+        super(name, mass, ATTACK_PROBABILITY);
     }
 
-    public void roam(Simulation simulation) {
+    /**
+     * Defines the roaming behavior for a Detritivore. It prioritizes moving towards
+     * locations with both water and plants, then just plants, then just water.
+     *
+     * @param simulation The current state of the simulation.
+     */
+    public void roam(final Simulation simulation) {
         PairInput move = findBestWaterAndPlant(simulation);
-        if (move != null) {
-            return;
+
+        if (move == null) {
+            move = findBestPlant(simulation);
         }
-        move = findBestPlant(simulation);
-        if (move != null) {
-            return;
+
+        if (move == null) {
+            move = findBestWater(simulation);
         }
-        move = findBestWater(simulation);
+
+        if (move != null) {
+            this.setPosition(move);
+        }
     }
 }

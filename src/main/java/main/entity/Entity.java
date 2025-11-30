@@ -4,13 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import fileio.PairInput;
 
 public abstract class Entity {
+    private static final int MAX_SCORE_INT = 100;
+    private static final double MAX_SCORE_DOUBLE = 100.0;
+
     private String name;
     private double mass;
     private boolean isScanned;
     private PairInput position;
     private int timestamp;
 
-    public Entity(String name, double mass) {
+    public Entity(final String name, final double mass) {
         this.name = name;
         this.mass = mass;
         isScanned = false;
@@ -24,19 +27,29 @@ public abstract class Entity {
         return mass;
     }
 
-    public final void setMass(double mass) {
+    public final void setMass(final double mass) {
         this.mass = mass;
     }
 
+    /**
+     * Checks if the entity has been scanned.
+     * This method is safe to be overridden by subclasses.
+     * @return true if the entity has been scanned, false otherwise.
+     */
     @JsonIgnore
     public boolean isScanned() {
         return isScanned;
     }
 
-    public final void scan(PairInput position, int timestamp) {
+    /**
+     * Marks the entity as scanned and records its position and the timestamp of the scan.
+     * @param scanPosition The position where the entity was scanned.
+     * @param scanTimestamp The timestamp of the scan.
+     */
+    public final void scan(final PairInput scanPosition, final int scanTimestamp) {
         isScanned = true;
-        this.position = position;
-        this.timestamp = timestamp;
+        this.position = scanPosition;
+        this.timestamp = scanTimestamp;
     }
 
     @JsonIgnore
@@ -49,14 +62,29 @@ public abstract class Entity {
         return timestamp;
     }
 
-    public final void setPosition(PairInput position) {
+    /**
+     * Sets the position of the entity.
+     * @param position The new position of the entity.
+     */
+    public final void setPosition(final PairInput position) {
         this.position = position;
     }
 
-    public void updateEnvironment(Object simulation) {}
+    /**
+     * Updates the entity's state in the simulation.
+     * This method is designed to be overridden by subclasses.
+     * @param simulation The simulation instance.
+     */
+    public void updateEnvironment(final Object simulation) { }
 
-    protected double normalizeScore(double score) {
-        double normalizeScore = Math.max(0, Math.min(100, score));
-        return Math.round(normalizeScore * 100.0) / 100.0;
+    /**
+     * Normalizes a score to a value between 0 and 100, rounded to two decimal places.
+     * This method is safe to be overridden by subclasses.
+     * @param score The score to be normalized.
+     * @return The normalized score.
+     */
+    protected double normalizeScore(final double score) {
+        double normalizedScore = Math.max(0, Math.min(MAX_SCORE_INT, score));
+        return Math.round(normalizedScore * MAX_SCORE_DOUBLE) / MAX_SCORE_DOUBLE;
     }
 }

@@ -7,7 +7,7 @@ public enum Status {
 
     private final int fertilizer;
 
-    Status(int fertilizer) {
+    Status(final int fertilizer) {
         this.fertilizer = fertilizer;
     }
 

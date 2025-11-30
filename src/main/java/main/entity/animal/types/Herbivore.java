@@ -4,13 +4,20 @@ import fileio.PairInput;
 import main.entity.animal.Animal;
 import main.simulation.Simulation;
 
-public class Herbivore extends Animal {
-    public Herbivore(String name, double mass) {
-        double attackProbability = 85;
-        super(name, mass, attackProbability);
+public final class Herbivore extends Animal {
+    private static final int ATTACK_PROBABILITY = 85;
+
+    public Herbivore(final String name, final double mass) {
+        super(name, mass, ATTACK_PROBABILITY);
     }
 
-    public void roam(Simulation simulation) {
+    /**
+     * Defines the roaming behavior for a Herbivore. It prioritizes finding locations
+     * with both water and plants, then just plants, then just water.
+     *
+     * @param simulation The current state of the simulation.
+     */
+    public void roam(final Simulation simulation) {
         PairInput move = findBestWaterAndPlant(simulation);
         if (move != null) {
             return;

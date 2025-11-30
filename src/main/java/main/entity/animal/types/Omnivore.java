@@ -4,13 +4,20 @@ import fileio.PairInput;
 import main.entity.animal.Animal;
 import main.simulation.Simulation;
 
-public class Omnivore extends Animal {
-    public Omnivore(String name, double mass) {
-        double attackProbability = 60;
-        super(name, mass, attackProbability);
+public final class Omnivore extends Animal {
+    private static final int ATTACK_PROBABILITY = 60;
+
+    public Omnivore(final String name, final double mass) {
+        super(name, mass, ATTACK_PROBABILITY);
     }
 
-    public void roam(Simulation simulation) {
+    /**
+     * Defines the roaming behavior for an Omnivore. It searches for resources and moves
+     * to the best available location.
+     *
+     * @param simulation The current state of the simulation.
+     */
+    public void roam(final Simulation simulation) {
         PairInput move = findBestWaterAndPlant(simulation);
         if (move == null) {
             move = findBestPlant(simulation);

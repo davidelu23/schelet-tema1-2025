@@ -3,9 +3,9 @@ package main.entity.plant.types;
 import main.entity.plant.Plant;
 
 public class Fern extends Plant {
-    public Fern(String name, double mass) {
-        double oxygenLevel = 0.0;
-        double stuckProbability = 0.3;
-        super(name, mass, oxygenLevel, stuckProbability);
+    private static final double STUCK_PROBABILITY = 0.3;
+
+    public Fern(final String name, final double mass) {
+        super(name, mass, 0.0, STUCK_PROBABILITY);
     }
 }

@@ -18,14 +18,25 @@ import main.entity.soil.Soil;
 import main.entity.water.Water;
 import main.robot.Move;
 import main.robot.Robot;
-import main.simulation.exceptions.*;
+import main.simulation.exceptions.NotEnoughBatteryException;
+import main.simulation.exceptions.ObjectNotFound;
+import main.simulation.exceptions.RobotChargingException;
+import main.simulation.exceptions.SimulationAlreadyStartedException;
+import main.simulation.exceptions.SimulationNotStartedException;
 
-import java.io.NotActiveException;
-
-public abstract class Commands {
+public class Commands {
     protected ObjectMapper mapper;
 
-    protected ObjectNode startSimulation(CommandInput commandInput, Simulation simulation)
+    /**
+     * Starts the simulation.
+     * This method is safe to be overridden by subclasses.
+     * @param commandInput The command input.
+     * @param simulation The simulation instance.
+     * @return The result of the command.
+     * @throws SimulationAlreadyStartedException if the simulation has already started.
+     */
+    protected ObjectNode startSimulation(final CommandInput commandInput,
+                                         final Simulation simulation)
             throws SimulationAlreadyStartedException {
         if (simulation != null) {
             throw new SimulationAlreadyStartedException();
@@ -37,7 +48,17 @@ public abstract class Commands {
         return result;
     }
 
-    protected ObjectNode printEnvConditions(CommandInput commandInput, Simulation simulation)
+    /**
+     * Prints the environmental conditions at the robot's location.
+     * This method is safe to be overridden by subclasses.
+     * @param commandInput The command input.
+     * @param simulation The simulation instance.
+     * @return The result of the command.
+     * @throws SimulationNotStartedException if the simulation has not started.
+     * @throws RobotChargingException if the robot is charging.
+     */
+    protected ObjectNode printEnvConditions(final CommandInput commandInput,
+                                            final Simulation simulation)
             throws SimulationNotStartedException, RobotChargingException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
@@ -78,7 +99,16 @@ public abstract class Commands {
         return result;
     }
 
-    protected ObjectNode printMap(CommandInput commandInput, Simulation simulation)
+    /**
+     * Prints the map of the territory.
+     * This method is safe to be overridden by subclasses.
+     * @param commandInput The command input.
+     * @param simulation The simulation instance.
+     * @return The result of the command.
+     * @throws SimulationNotStartedException if the simulation has not started.
+     * @throws RobotChargingException if the robot is charging.
+     */
+    protected ObjectNode printMap(final CommandInput commandInput, final Simulation simulation)
             throws SimulationNotStartedException, RobotChargingException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
@@ -102,8 +132,8 @@ public abstract class Commands {
                 Plant plant = territory.getPlantAt(j, i);
                 Animal animal = territory.getAnimalAt(j, i);
                 Water water = territory.getWaterAt(j, i);
-                sectionNode.put("totalNrOfObjects", (plant != null ? 1 : 0) +
-                                (animal != null ? 1 : 0) + (water != null ? 1 : 0));
+                sectionNode.put("totalNrOfObjects", (plant != null ? 1 : 0)
+                        + (animal != null ? 1 : 0) + (water != null ? 1 : 0));
 
                 Air air = territory.getAirAt(j, i);
                 if (air != null) {
@@ -127,8 +157,19 @@ public abstract class Commands {
         return result;
     }
 
-    protected ObjectNode moveRobot(CommandInput commandInput, Simulation simulation)
-            throws SimulationNotStartedException, NotEnoughBatteryException, RobotChargingException {
+    /**
+     * Moves the robot to the best possible location.
+     * This method is safe to be overridden by subclasses.
+     * @param commandInput The command input.
+     * @param simulation The simulation instance.
+     * @return The result of the command.
+     * @throws SimulationNotStartedException if the simulation has not started.
+     * @throws NotEnoughBatteryException if the robot does not have enough battery.
+     * @throws RobotChargingException if the robot is charging.
+     */
+    protected ObjectNode moveRobot(final CommandInput commandInput, final Simulation simulation)
+            throws SimulationNotStartedException, NotEnoughBatteryException,
+            RobotChargingException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
         }
@@ -145,13 +186,24 @@ public abstract class Commands {
         ObjectNode result = mapper.createObjectNode();
         result.put("command", commandInput.getCommand());
         result.put("message",
-                "The robot has successfully moved to position (" + simulation.getRobotLocation().getX()
+                "The robot has successfully moved to position ("
+                        + simulation.getRobotLocation().getX()
                         + ", " + simulation.getRobotLocation().getY() + ").");
         result.put("timestamp", commandInput.getTimestamp());
         return result;
     }
 
-    protected ObjectNode getEnergyStatus(CommandInput commandInput, Simulation simulation)
+    /**
+     * Gets the energy status of the robot.
+     * This method is safe to be overridden by subclasses.
+     * @param commandInput The command input.
+     * @param simulation The simulation instance.
+     * @return The result of the command.
+     * @throws SimulationNotStartedException if the simulation has not started.
+     * @throws RobotChargingException if the robot is charging.
+     */
+    protected ObjectNode getEnergyStatus(final CommandInput commandInput,
+                                         final Simulation simulation)
             throws SimulationNotStartedException, RobotChargingException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
@@ -161,12 +213,23 @@ public abstract class Commands {
         }
         ObjectNode result = mapper.createObjectNode();
         result.put("command", commandInput.getCommand());
-        result.put("message", "TerraBot has " + simulation.getRobot().getEnergy() + " energy points left.");
+        result.put("message", "TerraBot has "
+                + simulation.getRobot().getEnergy() + " energy points left.");
         result.put("timestamp", commandInput.getTimestamp());
         return result;
     }
 
-    protected ObjectNode rechargeBattery(CommandInput commandInput, Simulation simulation)
+    /**
+     * Recharges the robot's battery.
+     * This method is safe to be overridden by subclasses.
+     * @param commandInput The command input.
+     * @param simulation The simulation instance.
+     * @return The result of the command.
+     * @throws SimulationNotStartedException if the simulation has not started.
+     * @throws RobotChargingException if the robot is charging.
+     */
+    protected ObjectNode rechargeBattery(final CommandInput commandInput,
+                                         final Simulation simulation)
             throws SimulationNotStartedException, RobotChargingException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
@@ -184,7 +247,16 @@ public abstract class Commands {
         return result;
     }
 
-    protected ObjectNode changeWeatherConditions(CommandInput commandInput, Simulation simulation)
+    /**
+     * Changes the weather conditions.
+     * This method is safe to be overridden by subclasses.
+     * @param commandInput The command input.
+     * @param simulation The simulation instance.
+     * @return The result of the command.
+     * @throws SimulationNotStartedException if the simulation has not started.
+     */
+    protected ObjectNode changeWeatherConditions(final CommandInput commandInput,
+                                                 final Simulation simulation)
             throws SimulationNotStartedException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
@@ -211,6 +283,8 @@ public abstract class Commands {
                 MountainAir.peopleHiking(commandInput.getNumberOfHikers());
                 MountainAir.changeDuration(2);
             }
+            default -> {
+            }
         }
         ObjectNode result = mapper.createObjectNode();
         result.put("command", commandInput.getCommand());
@@ -219,8 +293,20 @@ public abstract class Commands {
         return result;
     }
 
-    protected ObjectNode scanObject(CommandInput commandInput, Simulation simulation)
-            throws SimulationNotStartedException, RobotChargingException, ObjectNotFound, NotEnoughBatteryException {
+    /**
+     * Scans an object at the robot's location.
+     * This method is safe to be overridden by subclasses.
+     * @param commandInput The command input.
+     * @param simulation The simulation instance.
+     * @return The result of the command.
+     * @throws SimulationNotStartedException if the simulation has not started.
+     * @throws RobotChargingException if the robot is charging.
+     * @throws ObjectNotFound if the object is not found.
+     * @throws NotEnoughBatteryException if the robot does not have enough battery.
+     */
+    protected ObjectNode scanObject(final CommandInput commandInput, final Simulation simulation)
+            throws SimulationNotStartedException, RobotChargingException,
+            ObjectNotFound, NotEnoughBatteryException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
         }
@@ -277,7 +363,47 @@ public abstract class Commands {
         return result;
     }
 
-    protected ObjectNode endSimulation(CommandInput commandInput, Simulation simulation)
+    /**
+     * Learns a fact about an object.
+     * This method is safe to be overridden by subclasses.
+     * @param commandInput The command input.
+     * @param simulation The simulation instance.
+     * @return The result of the command.
+     * @throws SimulationNotStartedException if the simulation has not started.
+     * @throws RobotChargingException if the robot is charging.
+     * @throws NotEnoughBatteryException if the robot does not have enough battery.
+     */
+    protected ObjectNode learnFact(final CommandInput commandInput, final Simulation simulation)
+            throws SimulationNotStartedException, RobotChargingException,
+            NotEnoughBatteryException {
+        if (simulation == null) {
+            throw new SimulationNotStartedException();
+        }
+        Robot robot = simulation.getRobot();
+        if (robot.getTimeToCharge() > 0) {
+            throw new RobotChargingException();
+        }
+        if (Robot.getScanCost() > robot.getEnergy()) {
+            throw new NotEnoughBatteryException();
+        }
+        robot.setEnergy(robot.getEnergy() - Robot.getLearnCost());
+        ObjectNode result = mapper.createObjectNode();
+        result.put("command", commandInput.getCommand());
+        result.put("message", "The fact has been successfully saved in the database.");
+        result.put("timestamp", commandInput.getTimestamp());
+        return result;
+    }
+
+    /**
+     * Ends the simulation.
+     * This method is safe to be overridden by subclasses.
+     * @param commandInput The command input.
+     * @param simulation The simulation instance.
+     * @return The result of the command.
+     * @throws SimulationNotStartedException if the simulation has not started.
+     */
+    protected ObjectNode endSimulation(final CommandInput commandInput,
+                                       final Simulation simulation)
             throws SimulationNotStartedException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
