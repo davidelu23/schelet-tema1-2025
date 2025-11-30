@@ -2,6 +2,9 @@ package main.entity.water;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import main.entity.Entity;
+import main.entity.air.Air;
+import main.entity.soil.Soil;
+import main.simulation.Simulation;
 
 import static java.lang.Math.abs;
 
@@ -74,5 +77,18 @@ public class Water extends Entity {
     @JsonIgnore
     public final boolean isFrozen() {
         return isFrozen;
+    }
+
+    @Override
+    public void updateEnvironment(Object simulation) {
+        Simulation sim = (Simulation) simulation;
+        Air air = sim.getTerritory().getAirAt(this.getPosition().getX(), this.getPosition().getY());
+        if (air != null) {
+            air.updateHumidity(0.1);
+        }
+        Soil soil = sim.getTerritory().getSoilAt(this.getPosition().getX(), this.getPosition().getY());
+        if (soil != null) {
+            soil.updateWaterRetention(0.1);
+        }
     }
 }

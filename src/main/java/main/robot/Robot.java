@@ -1,24 +1,34 @@
 package main.robot;
 
 import fileio.PairInput;
+import main.entity.Entity;
 import main.entity.air.Air;
 import main.entity.animal.Animal;
 import main.entity.plant.Plant;
 import main.entity.soil.Soil;
+import main.entity.water.Water;
 import main.simulation.Simulation;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Robot {
     private PairInput position;
     private int energy;
     private int timeToCharge;
     private final static int scanEnergyCost = 7;
+    private List<Plant> plantInventory;
+    private List<Animal> animalInventory;
+    private List<Water> waterInventory;
 
     public Robot(int energy) {
         position = new PairInput();
         this.energy = energy;
         timeToCharge = 0;
+        plantInventory = new ArrayList<>();
+        animalInventory = new ArrayList<>();
+        waterInventory = new ArrayList<>();
     }
 
     public final PairInput getPosition() {
@@ -43,6 +53,30 @@ public class Robot {
 
     public static int getScanCost() {
         return scanEnergyCost;
+    }
+
+    public final List<Plant> getPlantInventory() {
+        return plantInventory;
+    }
+
+    public void addToPlantInventory(Plant plant) {
+        plantInventory.add(plant);
+    }
+
+    public final List<Animal> getAnimalInventory() {
+        return animalInventory;
+    }
+
+    public void addToAnimalInventory(Animal animal) {
+        animalInventory.add(animal);
+    }
+
+    public final List<Water> getWaterInventory() {
+        return waterInventory;
+    }
+
+    public void addToWaterInventory(Water water) {
+        waterInventory.add(water);
     }
 
     public void moveToPosition(PairInput position) {

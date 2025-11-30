@@ -1,7 +1,7 @@
 package main.entity.plant;
 
 public enum Maturity {
-    Young(0.4),
+    Young(0.2),
     Mature(0.7),
     Old(0.4),
     Dead(0.0);

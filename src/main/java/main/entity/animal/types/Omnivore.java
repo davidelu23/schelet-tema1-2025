@@ -12,16 +12,20 @@ public class Omnivore extends Animal {
 
     public void roam(Simulation simulation) {
         PairInput move = findBestWaterAndPlant(simulation);
-        if (move != null) {
-            return;
+        if (move == null) {
+            move = findBestPlant(simulation);
         }
-        move = findBestPlant(simulation);
-        if (move != null) {
-            return;
+        if (move == null) {
+            move = findBestWater(simulation);
         }
-        move = findBestWater(simulation);
-        if (move != null) {
-            return;
+        if (move == null) {
+            move = findBestRemainingMove(simulation);
         }
+
+        int oldX = this.getPosition().getX();
+        int oldY = this.getPosition().getY();
+        simulation.getTerritory().removeAnimal(oldX, oldY);
+        this.setPosition(move);
+        simulation.getTerritory().addAnimal(this, move.getX(), move.getY());
     }
 }

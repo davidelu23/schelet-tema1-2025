@@ -24,25 +24,20 @@ import main.simulation.Simulation;
         @JsonSubTypes.Type(value = Parasite.class, name = "Parasites")
 })
 public abstract class Animal extends Entity implements Hazardous {
-    private Status status = Status.hungry;
+    private Status status;
     private double attackProbability;
-    private PairInput position;
     private double fertilizer;
 
     public Animal(String name, double mass, double attackProbability) {
         super(name, mass);
         this.attackProbability = attackProbability;
         this.fertilizer = 0;
+        this.status = Status.hungry;
     }
 
     @JsonIgnore
     public double getInteractionProbability() {
         return (100 - attackProbability) / 10.0;
-    }
-
-    @JsonIgnore
-    public final PairInput getPosition() {
-        return position;
     }
 
     @JsonIgnore
@@ -63,10 +58,6 @@ public abstract class Animal extends Entity implements Hazardous {
         this.status = status;
     }
 
-    public final void setPosition(PairInput position) {
-        this.position = position;
-    }
-
     public abstract void roam(Simulation simulation);
 
     public PairInput findBestAnimal(Simulation simulation) {
@@ -74,8 +65,8 @@ public abstract class Animal extends Entity implements Hazardous {
         int[] idy = {1, 0, -1, 0};
         PairInput move = new PairInput();
         for (int i = 0; i < 4; i++) {
-            int x = position.getX() + idx[i];
-            int y = position.getY() + idy[i];
+            int x = this.getPosition().getX() + idx[i];
+            int y = this.getPosition().getY() + idy[i];
             if (x < 0 || x >= simulation.getTerritory().getWidth()) {
                 continue;
             }
@@ -97,8 +88,8 @@ public abstract class Animal extends Entity implements Hazardous {
         PairInput move = new PairInput();
         double bestScore = -1;
         for (int i = 0; i < 4; i++) {
-            int x = position.getX() + idx[i];
-            int y = position.getY() + idy[i];
+            int x = this.getPosition().getX() + idx[i];
+            int y = this.getPosition().getY() + idy[i];
             if (x < 0 || x >= simulation.getTerritory().getWidth()) {
                 continue;
             }
@@ -126,8 +117,8 @@ public abstract class Animal extends Entity implements Hazardous {
         PairInput move = new PairInput();
         double bestScore = -1;
         for (int i = 0; i < 4; i++) {
-            int x = position.getX() + idx[i];
-            int y = position.getY() + idy[i];
+            int x = this.getPosition().getX() + idx[i];
+            int y = this.getPosition().getY() + idy[i];
             if (x < 0 || x >= simulation.getTerritory().getWidth()) {
                 continue;
             }
@@ -154,8 +145,8 @@ public abstract class Animal extends Entity implements Hazardous {
         int[] idy = {1, 0, -1, 0};
         PairInput move = new PairInput();
         for (int i = 0; i < 4; i++) {
-            int x = position.getX() + idx[i];
-            int y = position.getY() + idy[i];
+            int x = this.getPosition().getX() + idx[i];
+            int y = this.getPosition().getY() + idy[i];
             if (x < 0 || x >= simulation.getTerritory().getWidth()) {
                 continue;
             }
@@ -171,6 +162,26 @@ public abstract class Animal extends Entity implements Hazardous {
         return null;
     }
 
+    public PairInput findBestRemainingMove(Simulation simulation) {
+        int[] idx = {0, 1, 0, -1};
+        int[] idy = {1, 0, -1, 0};
+        PairInput move = new PairInput();
+        for (int i = 0; i < 4; i++) {
+            int x = this.getPosition().getX() + idx[i];
+            int y = this.getPosition().getY() + idy[i];
+            if (x < 0 || x >= simulation.getTerritory().getWidth()) {
+                continue;
+            }
+            if (y < 0 || y >= simulation.getTerritory().getHeight()) {
+                continue;
+            }
+            move.setX(x);
+            move.setY(y);
+            return move;
+        }
+        return null;
+    }
+
     public void drinkWater(Water water) {
         double intakeRate = 0.08;
         double waterToDrink = Math.min(this.getMass() * intakeRate, water.getMass());
@@ -179,5 +190,21 @@ public abstract class Animal extends Entity implements Hazardous {
         this.status = Status.wellFed;
     }
 
+    @Override
+    public void updateEnvironment(Object simulation) {
+        Simulation sim = (Simulation) simulation;
+        if (this.status == Status.hungry) {
+            this.roam(sim);
+        }
+        if (this.status == Status.wellFed) {
+            int x = this.getPosition().getX();
+            int y = this.getPosition().getY();
+            main.entity.soil.Soil soil = sim.getTerritory().getSoilAt(x, y);
+            if (soil != null) {
+                soil.setOrganicMatter(soil.getOrganicMatter() + this.fertilizer);
+            }
+            this.status = Status.hungry;
+        }
+    }
 
 }

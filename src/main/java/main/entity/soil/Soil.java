@@ -26,7 +26,7 @@ import main.entity.soil.types.DesertSoil;
 })
 public abstract class Soil extends Entity implements Hazardous {
     private final double nitrogen;
-    private final double waterRetention;
+    private double waterRetention;
     private final double soilpH;
     private double organicMatter;
 
@@ -44,6 +44,11 @@ public abstract class Soil extends Entity implements Hazardous {
 
     public double getWaterRetention() {
         return waterRetention;
+    }
+
+    public void updateWaterRetention(double value) {
+        waterRetention += value;
+        waterRetention = normalizeScore(waterRetention);
     }
 
     public double getSoilpH() {

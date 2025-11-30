@@ -41,27 +41,27 @@ public class Territory {
     private void initializeSoil(Territory territory, List<SoilInput> soilInputs) {
         if (soilInputs == null) return;
         for (SoilInput soilInput : soilInputs) {
-            Soil soil = switch (soilInput.getType()) {
-                case "ForestSoil" -> new ForestSoil(soilInput.getName(), soilInput.getMass(),
-                        soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
-                        soilInput.getOrganicMatter(), soilInput.getLeafLitter());
-                case "SwampSoil" -> new SwampSoil(soilInput.getName(), soilInput.getMass(),
-                        soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
-                        soilInput.getOrganicMatter(), soilInput.getWaterLogging());
-                case "TundraSoil" -> new TundraSoil(soilInput.getName(), soilInput.getMass(),
-                        soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
-                        soilInput.getOrganicMatter(), soilInput.getPermafrostDepth());
-                case "DesertSoil" -> new DesertSoil(soilInput.getName(), soilInput.getMass(),
-                        soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
-                        soilInput.getOrganicMatter(), soilInput.getSalinity());
-                case "GrasslandSoil" -> new GrasslandSoil(soilInput.getName(), soilInput.getMass(),
-                        soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
-                        soilInput.getOrganicMatter(), soilInput.getRootDensity());
-                default -> null;
-            };
+            for (PairInput pairInput : soilInput.getSections()) {
+                Soil soil = switch (soilInput.getType()) {
+                    case "ForestSoil" -> new ForestSoil(soilInput.getName(), soilInput.getMass(),
+                            soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
+                            soilInput.getOrganicMatter(), soilInput.getLeafLitter());
+                    case "SwampSoil" -> new SwampSoil(soilInput.getName(), soilInput.getMass(),
+                            soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
+                            soilInput.getOrganicMatter(), soilInput.getWaterLogging());
+                    case "TundraSoil" -> new TundraSoil(soilInput.getName(), soilInput.getMass(),
+                            soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
+                            soilInput.getOrganicMatter(), soilInput.getPermafrostDepth());
+                    case "DesertSoil" -> new DesertSoil(soilInput.getName(), soilInput.getMass(),
+                            soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
+                            soilInput.getOrganicMatter(), soilInput.getSalinity());
+                    case "GrasslandSoil" -> new GrasslandSoil(soilInput.getName(), soilInput.getMass(),
+                            soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
+                            soilInput.getOrganicMatter(), soilInput.getRootDensity());
+                    default -> null;
+                };
 
-            if (soil != null) {
-                for (PairInput pairInput : soilInput.getSections()) {
+                if (soil != null) {
                     territory.addSoil(soil, pairInput.getX(), pairInput.getY());
                 }
             }
@@ -71,17 +71,17 @@ public class Territory {
     private void initializePlants(Territory territory, List<PlantInput> plantInputs) {
         if (plantInputs == null) return;
         for (PlantInput plantInput : plantInputs) {
-            Plant plant = switch (plantInput.getType()) {
-                case "GymnospermsPlants" -> new GymnospermPlants(plantInput.getName(), plantInput.getMass());
-                case "FloweringPlants" -> new FloweringPlant(plantInput.getName(), plantInput.getMass());
-                case "Ferns" -> new Fern(plantInput.getName(), plantInput.getMass());
-                case "Algae" -> new Algae(plantInput.getName(), plantInput.getMass());
-                case "Mosses" -> new Moss(plantInput.getName(), plantInput.getMass());
-                default -> null;
-            };
+            for (PairInput pairInput : plantInput.getSections()) {
+                Plant plant = switch (plantInput.getType()) {
+                    case "GymnospermsPlants" -> new GymnospermPlants(plantInput.getName(), plantInput.getMass());
+                    case "FloweringPlants" -> new FloweringPlant(plantInput.getName(), plantInput.getMass());
+                    case "Ferns" -> new Fern(plantInput.getName(), plantInput.getMass());
+                    case "Algae" -> new Algae(plantInput.getName(), plantInput.getMass());
+                    case "Mosses" -> new Moss(plantInput.getName(), plantInput.getMass());
+                    default -> null;
+                };
 
-            if (plant != null) {
-                for (PairInput pairInput : plantInput.getSections()) {
+                if (plant != null) {
                     territory.addPlant(plant, pairInput.getX(), pairInput.getY());
                 }
             }
@@ -91,19 +91,18 @@ public class Territory {
     private void initializeAnimals(Territory territory, List<AnimalInput> animalInputs) {
         if (animalInputs == null) return;
         for (AnimalInput animalInput : animalInputs) {
-            Animal animal = switch (animalInput.getType()) {
-                case "Parasites" -> new Parasite(animalInput.getName(), animalInput.getMass());
-                case "Herbivores" -> new Herbivore(animalInput.getName(), animalInput.getMass());
-                case "Carnivores" -> new Carnivore(animalInput.getName(), animalInput.getMass());
-                case "Omnivores" -> new Omnivore(animalInput.getName(), animalInput.getMass());
-                case "Detritivores" -> new Detritivore(animalInput.getName(), animalInput.getMass());
-                default -> null;
-            };
+            for (PairInput pairInput : animalInput.getSections()) {
+                Animal animal = switch (animalInput.getType()) {
+                    case "Parasites" -> new Parasite(animalInput.getName(), animalInput.getMass());
+                    case "Herbivores" -> new Herbivore(animalInput.getName(), animalInput.getMass());
+                    case "Carnivores" -> new Carnivore(animalInput.getName(), animalInput.getMass());
+                    case "Omnivores" -> new Omnivore(animalInput.getName(), animalInput.getMass());
+                    case "Detritivores" -> new Detritivore(animalInput.getName(), animalInput.getMass());
+                    default -> null;
+                };
 
-            if (animal != null) {
-                for (PairInput pairInput : animalInput.getSections()) {
+                if (animal != null) {
                     territory.addAnimal(animal, pairInput.getX(), pairInput.getY());
-                    animal.setPosition(pairInput);
                 }
             }
         }
@@ -112,9 +111,10 @@ public class Territory {
     private void initializeWater(Territory territory, List<WaterInput> waterInputs) {
         if (waterInputs == null) return;
         for (WaterInput waterInput : waterInputs) {
-            Water water = new Water(waterInput.getName(), waterInput.getMass(), waterInput.getType(), waterInput.getPurity(), waterInput.getSalinity(), waterInput.getTurbidity(), waterInput.getContaminantIndex(), waterInput.getPH(), waterInput.isFrozen());
-
             for (PairInput pairInput : waterInput.getSections()) {
+                Water water = new Water(waterInput.getName(), waterInput.getMass(), waterInput.getType(),
+                        waterInput.getSalinity(), waterInput.getPH(), waterInput.getPurity(),
+                        waterInput.getTurbidity(), waterInput.getContaminantIndex(), waterInput.isFrozen());
                 territory.addWater(water, pairInput.getX(), pairInput.getY());
             }
         }
@@ -123,17 +123,26 @@ public class Territory {
     private void initializeAir(Territory territory, List<AirInput> airInputs) {
         if (airInputs == null) return;
         for (AirInput airInput : airInputs) {
-            Air air = switch (airInput.getType()) {
-                case "MountainAir" -> new MountainAir(airInput.getName(), airInput.getMass(), airInput.getHumidity(), airInput.getTemperature(), airInput.getOxygenLevel(), airInput.getAltitude());
-                case "TemperateAir" -> new TemperateAir(airInput.getName(), airInput.getMass(), airInput.getHumidity(), airInput.getTemperature(), airInput.getOxygenLevel(), airInput.getPollenLevel());
-                case "TropicalAir" -> new TropicalAir(airInput.getName(), airInput.getMass(), airInput.getHumidity(), airInput.getTemperature(), airInput.getOxygenLevel(), airInput.getCo2Level());
-                case "PolarAir" -> new PolarAir(airInput.getName(), airInput.getMass(), airInput.getHumidity(), airInput.getTemperature(), airInput.getOxygenLevel(), airInput.getIceCrystalConcentration());
-                case "DesertAir" -> new DesertAir(airInput.getName(), airInput.getMass(), airInput.getHumidity(), airInput.getTemperature(), airInput.getOxygenLevel(), airInput.getDustParticles());
-                default -> null;
-            };
+            for (PairInput pairInput : airInput.getSections()) {
+                Air air = switch (airInput.getType()) {
+                    case "MountainAir" -> new MountainAir(airInput.getName(), airInput.getMass(),
+                            airInput.getHumidity(), airInput.getTemperature(), airInput.getOxygenLevel(),
+                            airInput.getAltitude());
+                    case "TemperateAir" -> new TemperateAir(airInput.getName(), airInput.getMass(),
+                            airInput.getHumidity(), airInput.getTemperature(), airInput.getOxygenLevel(),
+                            airInput.getPollenLevel());
+                    case "TropicalAir" -> new TropicalAir(airInput.getName(), airInput.getMass(),
+                            airInput.getHumidity(), airInput.getTemperature(), airInput.getOxygenLevel(),
+                            airInput.getCo2Level());
+                    case "PolarAir" -> new PolarAir(airInput.getName(), airInput.getMass(), airInput.getHumidity(),
+                            airInput.getTemperature(), airInput.getOxygenLevel(),
+                            airInput.getIceCrystalConcentration());
+                    case "DesertAir" -> new DesertAir(airInput.getName(), airInput.getMass(), airInput.getHumidity(),
+                            airInput.getTemperature(), airInput.getOxygenLevel(), airInput.getDustParticles());
+                    default -> null;
+                };
 
-            if (air != null) {
-                for (PairInput pairInput : airInput.getSections()) {
+                if (air != null) {
                     territory.addAir(air, pairInput.getX(), pairInput.getY());
                 }
             }
@@ -164,9 +173,27 @@ public class Territory {
         }
     }
 
+    public void removePlant(int x, int y) {
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+            plants[y][x] = null;
+        }
+    }
+
+    public void removeWater(int x, int y) {
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+            water[y][x] = null;
+        }
+    }
+
     public void addAnimal(Animal animal, int x, int y) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
             animals[y][x] = animal;
+        }
+    }
+
+    public void removeAnimal(int x, int y) {
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+            animals[y][x] = null;
         }
     }
 

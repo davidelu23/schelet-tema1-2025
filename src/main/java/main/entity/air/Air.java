@@ -23,13 +23,13 @@ import main.entity.air.types.DesertAir;
         @JsonSubTypes.Type(value = DesertAir.class, name = "DesertAir")
 })
 public abstract class Air extends Entity {
-    private final double humidity;
+    private double humidity;
     private final double temperature;
-    private final double oxygenLevel;
-    private final double maxScore;
+    private double oxygenLevel;
+    private final int maxScore;
 
     public Air(String name, double mass, double humidity, double temperature,
-               double oxygenLevel, double maxScore) {
+               double oxygenLevel, int maxScore) {
         super(name, mass);
         this.humidity = humidity;
         this.temperature = temperature;
@@ -49,9 +49,15 @@ public abstract class Air extends Entity {
         return humidity;
     }
 
+    public void updateHumidity(double value) {
+        humidity += value;
+        humidity = normalizeScore(humidity);
+    }
+
     public final double getTemperature() {
         return temperature;
     }
+
     public final double getOxygenLevel() {
         return oxygenLevel;
     }
@@ -73,11 +79,21 @@ public abstract class Air extends Entity {
 
     @JsonIgnore
     public double getToxicityAQ() {
-        return 100 * (1 - getScore()/maxScore);
+        return normalizeScore(100 * (1 - getScore()/maxScore));
     }
 
     @JsonIgnore
     public boolean isToxic() {
         return getToxicityAQ() > (0.8 * maxScore);
+    }
+
+    public void updateOxygenLevel(double oxygenToAdd) {
+        this.oxygenLevel += oxygenToAdd;
+        this.oxygenLevel = normalizeScore(this.oxygenLevel);
+    }
+
+    @Override
+    public void updateEnvironment(Object simulation) {
+
     }
 }

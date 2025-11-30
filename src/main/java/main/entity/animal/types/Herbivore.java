@@ -20,8 +20,5 @@ public class Herbivore extends Animal {
             return;
         }
         move = findBestWater(simulation);
-        if (move != null) {
-            return;
-        }
     }
 }

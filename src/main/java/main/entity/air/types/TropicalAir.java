@@ -34,6 +34,6 @@ public class TropicalAir extends Air {
     public double getScore() {
         double normalAirQuality = normalizeScore((this.getOxygenLevel() * 2) + (this.getHumidity() * 0.5)
                 - (co2Level * 0.01));
-        return normalizeScore(normalAirQuality + (rainfall * 0.3));
+        return normalAirQuality + (rainfall * 0.3);
     }
 }

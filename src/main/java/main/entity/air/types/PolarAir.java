@@ -34,6 +34,6 @@ public class PolarAir extends Air {
     public double getScore() {
         double normalAirQuality = normalizeScore((this.getOxygenLevel() * 2) + (this.getHumidity() * 0.5)
                 - (iceCrystalConcentration * 0.01));
-        return normalizeScore(normalAirQuality - (windSpeed * 0.2));
+        return normalAirQuality - (windSpeed * 0.2);
     }
 }

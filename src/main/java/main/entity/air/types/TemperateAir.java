@@ -35,6 +35,6 @@ public class TemperateAir extends Air {
         double normalAirQuality = normalizeScore((this.getOxygenLevel() * 2) + (this.getHumidity() * 0.7)
                 - (pollenLevel * 0.1));
         double seasonPenalty = "Spring".equalsIgnoreCase(season) ? 15 : 0;
-        return normalizeScore(normalAirQuality - seasonPenalty);
+        return normalAirQuality - seasonPenalty;
     }
 }

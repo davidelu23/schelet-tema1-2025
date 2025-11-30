@@ -28,9 +28,6 @@ public class Carnivore extends Animal {
             return;
         }
         move = findBestWater(simulation);
-        if (move != null) {
-            return;
-        }
     }
 
     private void eatAnimal(Animal animal) {

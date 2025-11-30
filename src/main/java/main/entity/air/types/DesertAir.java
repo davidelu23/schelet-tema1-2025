@@ -40,6 +40,6 @@ public class DesertAir extends Air {
     public double getScore() {
         double normalAirQuality = normalizeScore((this.getOxygenLevel() * 2) - (dustParticles * 0.2)
                 - (this.getTemperature() * 0.3));
-        return normalizeScore(normalAirQuality - (desertStorm ? 30 : 0));
+        return normalAirQuality - (desertStorm ? 30 : 0);
     }
 }

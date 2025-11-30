@@ -34,6 +34,6 @@ public class MountainAir extends Air {
     public double getScore() {
         double oxygenFactor = this.getOxygenLevel() - (altitude / 1000 * 0.5);
         double normalAirQuality = normalizeScore((oxygenFactor * 2) + (this.getHumidity() * 0.6));
-        return normalizeScore(normalAirQuality - (numberOfHikers * 0.1));
+        return normalAirQuality - (numberOfHikers * 0.1);
     }
 }

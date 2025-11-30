@@ -234,18 +234,34 @@ public abstract class Commands {
         String type = commandInput.getColor() + commandInput.getSmell() + commandInput.getSound();
         int x = simulation.getRobotLocation().getX();
         int y = simulation.getRobotLocation().getY();
+        int timestamp = commandInput.getTimestamp();
         Entity object = switch (type) {
             case "nonenonenone" -> {
                 type = "water";
-                yield simulation.getTerritory().getWaterAt(x, y);
+                Water water = simulation.getTerritory().getWaterAt(x, y);
+                if (water != null) {
+                    water.scan(robot.getPosition(), timestamp);
+                    robot.addToWaterInventory(water);
+                }
+                yield water;
             }
             case "pinksweetnone" -> {
                 type = "plant";
-                yield  simulation.getTerritory().getPlantAt(x, y);
+                Plant plant = simulation.getTerritory().getPlantAt(x, y);
+                if (plant != null) {
+                    plant.scan(robot.getPosition(), timestamp);
+                    robot.addToPlantInventory(plant);
+                }
+                yield plant;
             }
-            case "brownearthymuuu" -> {
+            case "brownearthymuu" -> {
                 type = "animal";
-                yield  simulation.getTerritory().getPlantAt(x, y);
+                Animal animal = simulation.getTerritory().getAnimalAt(x, y);
+                if (animal != null) {
+                    animal.scan(robot.getPosition(), timestamp);
+                    robot.addToAnimalInventory(animal);
+                }
+                yield animal;
             }
             default -> null;
         };
@@ -255,7 +271,8 @@ public abstract class Commands {
         robot.setEnergy(robot.getEnergy() - Robot.getScanCost());
         ObjectNode result = mapper.createObjectNode();
         result.put("command", commandInput.getCommand());
-        result.put("message", "The scanned object is a " + type + ".");
+        String article = type.equals("water") ? "" : (type.equals("animal") ? "an " : "a ");
+        result.put("message", "The scanned object is " + article + type + ".");
         result.put("timestamp", commandInput.getTimestamp());
         return result;
     }

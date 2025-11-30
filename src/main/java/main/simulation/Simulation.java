@@ -3,10 +3,14 @@ package main.simulation;
 import fileio.PairInput;
 import fileio.SimulationInput;
 import fileio.TerritorySectionParamsInput;
+import main.entity.air.Air;
 import main.entity.air.types.*;
 import main.entity.animal.Animal;
 import main.entity.animal.Status;
+import main.entity.plant.Maturity;
+import main.entity.plant.Plant;
 import main.entity.soil.Soil;
+import main.entity.water.Water;
 import main.robot.Robot;
 
 public class Simulation{
@@ -61,23 +65,18 @@ public class Simulation{
 
     public void runEnviorment(int lastTimestamp, int currentTimestamp) {
         updateEvents(currentTimestamp - lastTimestamp);
-        for (int i = 0; i < territory.getHeight(); i++) {
-            for (int j = 0; j < territory.getWidth(); j++) {
-                Animal animal = territory.getAnimalAt(i, j);
-                if (animal == null) {
-                    continue;
-                }
-                if (!animal.isScanned()) {
-                    continue;
-                }
-                if (animal.getStatus() == Status.hungry) {
-                    animal.roam(this);
-                }
-                if (animal.getStatus() == Status.wellFed) {
-                    Soil soil = territory.getSoilAt(i, j);
-                    soil.setOrganicMatter(soil.getOrganicMatter() + animal.getFertilizer());
-                    animal.setStatus(Status.hungry);
-                }
+
+        for (Water water : robot.getWaterInventory()) {
+            if (water.getTimestamp() % 2 == currentTimestamp % 2) {
+                water.updateEnvironment(this);
+            }
+        }
+        for (Plant plant : robot.getPlantInventory()) {
+            plant.updateEnvironment(this);
+        }
+        for (Animal animal : robot.getAnimalInventory()) {
+            if (animal.getTimestamp() % 2 == currentTimestamp % 2) {
+                animal.updateEnvironment(this);
             }
         }
     }

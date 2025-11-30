@@ -3,9 +3,12 @@ package main.entity.plant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import fileio.PairInput;
 import main.entity.Entity;
 import main.entity.Hazardous;
+import main.entity.air.Air;
 import main.entity.plant.types.*;
+import main.simulation.Simulation;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -32,7 +35,7 @@ public abstract class Plant extends Entity implements Hazardous {
 
     public void grow(double amount) {
         this.growthRate += amount;
-        if (growthRate > 0) {
+        if (growthRate >= 1.0) {
             ageUp();
             this.growthRate = 0;
         }
@@ -53,6 +56,25 @@ public abstract class Plant extends Entity implements Hazardous {
 
     @JsonIgnore
     public double getInteractionProbability() {
-        return stuckProbability;
+        return normalizeScore(stuckProbability);
+    }
+
+    @JsonIgnore
+    public Maturity getMaturity() {
+        return maturity;
+    }
+
+    @Override
+    public void updateEnvironment(Object simulation) {
+        this.grow(0.2);
+        Simulation sim = (Simulation) simulation;
+        if (this.maturity == Maturity.Dead) {
+            sim.getTerritory().removePlant(this.getPosition().getX(), this.getPosition().getY());
+            return;
+        }
+        Air air = sim.getTerritory().getAirAt(this.getPosition().getX(), this.getPosition().getY());
+        if (air != null) {
+            air.updateOxygenLevel(this.getOxygen());
+        }
     }
 }
