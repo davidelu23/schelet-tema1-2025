@@ -5,16 +5,20 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.CommandInput;
 import fileio.PairInput;
+import main.entity.Entity;
 import main.entity.air.Air;
+import main.entity.air.types.DesertAir;
+import main.entity.air.types.MountainAir;
+import main.entity.air.types.PolarAir;
+import main.entity.air.types.TemperateAir;
+import main.entity.air.types.TropicalAir;
 import main.entity.animal.Animal;
 import main.entity.plant.Plant;
 import main.entity.soil.Soil;
 import main.entity.water.Water;
 import main.robot.Move;
 import main.robot.Robot;
-import main.simulation.exceptions.NotEnoughBatteryException;
-import main.simulation.exceptions.SimulationAlreadyStartedException;
-import main.simulation.exceptions.SimulationNotStartedException;
+import main.simulation.exceptions.*;
 
 import java.io.NotActiveException;
 
@@ -34,9 +38,12 @@ public abstract class Commands {
     }
 
     protected ObjectNode printEnvConditions(CommandInput commandInput, Simulation simulation)
-            throws SimulationNotStartedException {
+            throws SimulationNotStartedException, RobotChargingException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
+        }
+        if (simulation.getRobot().getTimeToCharge() > 0) {
+            throw new RobotChargingException();
         }
         ObjectNode result = mapper.createObjectNode();
         result.put("command", commandInput.getCommand());
@@ -72,9 +79,12 @@ public abstract class Commands {
     }
 
     protected ObjectNode printMap(CommandInput commandInput, Simulation simulation)
-            throws SimulationNotStartedException {
+            throws SimulationNotStartedException, RobotChargingException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
+        }
+        if (simulation.getRobot().getTimeToCharge() > 0) {
+            throw new RobotChargingException();
         }
         ObjectNode result = mapper.createObjectNode();
         result.put("command", commandInput.getCommand());
@@ -118,9 +128,12 @@ public abstract class Commands {
     }
 
     protected ObjectNode moveRobot(CommandInput commandInput, Simulation simulation)
-            throws SimulationNotStartedException, NotEnoughBatteryException {
+            throws SimulationNotStartedException, NotEnoughBatteryException, RobotChargingException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
+        }
+        if (simulation.getRobot().getTimeToCharge() > 0) {
+            throw new RobotChargingException();
         }
         Robot robot = simulation.getRobot();
         Move move = robot.findBestMove(simulation);
@@ -139,9 +152,12 @@ public abstract class Commands {
     }
 
     protected ObjectNode getEnergyStatus(CommandInput commandInput, Simulation simulation)
-            throws SimulationNotStartedException {
+            throws SimulationNotStartedException, RobotChargingException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
+        }
+        if (simulation.getRobot().getTimeToCharge() > 0) {
+            throw new RobotChargingException();
         }
         ObjectNode result = mapper.createObjectNode();
         result.put("command", commandInput.getCommand());
@@ -151,16 +167,95 @@ public abstract class Commands {
     }
 
     protected ObjectNode rechargeBattery(CommandInput commandInput, Simulation simulation)
-            throws SimulationNotStartedException {
+            throws SimulationNotStartedException, RobotChargingException {
         if (simulation == null) {
             throw new SimulationNotStartedException();
         }
         Robot robot = simulation.getRobot();
+        if (robot.getTimeToCharge() > 0) {
+            throw new RobotChargingException();
+        }
         robot.setTimeToCharge(commandInput.getTimeToCharge());
         robot.setEnergy(robot.getEnergy() + commandInput.getTimeToCharge());
         ObjectNode result = mapper.createObjectNode();
         result.put("command", commandInput.getCommand());
         result.put("message", "Robot battery is charging.");
+        result.put("timestamp", commandInput.getTimestamp());
+        return result;
+    }
+
+    protected ObjectNode changeWeatherConditions(CommandInput commandInput, Simulation simulation)
+            throws SimulationNotStartedException {
+        if (simulation == null) {
+            throw new SimulationNotStartedException();
+        }
+        String event = commandInput.getType();
+        switch (event) {
+            case "rainfall" -> {
+                TropicalAir.rainfall(commandInput.getRainfall());
+                TropicalAir.changeDuration(2);
+            }
+            case "polarStorm" -> {
+                PolarAir.polarStorm(commandInput.getWindSpeed());
+                PolarAir.changeDuration(2);
+            }
+            case "newSeason" -> {
+                TemperateAir.newSeason(commandInput.getSeason());
+                TemperateAir.changeDuration(2);
+            }
+            case "desertStorm" -> {
+                DesertAir.desertStorm(commandInput.isDesertStorm());
+                DesertAir.changeDuration(2);
+            }
+            case "peopleHiking" -> {
+                MountainAir.peopleHiking(commandInput.getNumberOfHikers());
+                MountainAir.changeDuration(2);
+            }
+        }
+        ObjectNode result = mapper.createObjectNode();
+        result.put("command", commandInput.getCommand());
+        result.put("message", "The weather has changed.");
+        result.put("timestamp", commandInput.getTimestamp());
+        return result;
+    }
+
+    protected ObjectNode scanObject(CommandInput commandInput, Simulation simulation)
+            throws SimulationNotStartedException, RobotChargingException, ObjectNotFound, NotEnoughBatteryException {
+        if (simulation == null) {
+            throw new SimulationNotStartedException();
+        }
+        Robot robot = simulation.getRobot();
+        if (robot.getTimeToCharge() > 0) {
+            throw new RobotChargingException();
+        }
+        if (Robot.getScanCost() > robot.getEnergy()) {
+            throw new NotEnoughBatteryException();
+        }
+        String type = commandInput.getColor() + commandInput.getSmell() + commandInput.getSound();
+        int x = simulation.getRobotLocation().getX();
+        int y = simulation.getRobotLocation().getY();
+        Entity object = switch (type) {
+            case "nonenonenone" -> {
+                type = "water";
+                yield simulation.getTerritory().getWaterAt(x, y);
+            }
+            case "pinksweetnone" -> {
+                type = "plant";
+                yield  simulation.getTerritory().getPlantAt(x, y);
+            }
+            case "brownearthymuuu" -> {
+                type = "animal";
+                yield  simulation.getTerritory().getPlantAt(x, y);
+            }
+            default -> null;
+        };
+        if (object == null) {
+            throw new ObjectNotFound();
+        }
+        robot.setEnergy(robot.getEnergy() - Robot.getScanCost());
+        ObjectNode result = mapper.createObjectNode();
+        result.put("command", commandInput.getCommand());
+        result.put("message", "The scanned object is a " + type + ".");
         result.put("timestamp", commandInput.getTimestamp());
         return result;
     }

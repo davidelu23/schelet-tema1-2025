@@ -3,7 +3,7 @@ package main.entity.soil.types;
 import main.entity.Hazardous;
 import main.entity.soil.Soil;
 
-public class GrasslandSoil extends Soil implements Hazardous {
+public class GrasslandSoil extends Soil {
     private final double rootDensity;
 
     public GrasslandSoil(String name, double mass, double nitrogen, double waterRetention,
@@ -25,6 +25,6 @@ public class GrasslandSoil extends Soil implements Hazardous {
 
     @Override
     public double getInteractionProbability() {
-        return 	((50 - rootDensity) + this.getWaterRetention() * 0.5) / 75 * 100;
+        return ((50 - rootDensity) + this.getWaterRetention() * 0.5) / 75 * 100;
     }
 }

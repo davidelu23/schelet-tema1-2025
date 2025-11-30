@@ -3,7 +3,7 @@ package main.entity.soil.types;
 import main.entity.soil.Soil;
 import main.entity.Hazardous;
 
-public class TundraSoil extends Soil implements Hazardous {
+public class TundraSoil extends Soil {
     private final double permafrostDepth;
 
     public TundraSoil(String name, double mass, double nitrogen, double waterRetention,

@@ -13,6 +13,7 @@ public class Robot {
     private PairInput position;
     private int energy;
     private int timeToCharge;
+    private final static int scanEnergyCost = 7;
 
     public Robot(int energy) {
         position = new PairInput();
@@ -33,11 +34,15 @@ public class Robot {
     }
 
     public final void setTimeToCharge(int timeToCharge) {
-        this.timeToCharge = timeToCharge;
+        this.timeToCharge = Math.max(timeToCharge, 0);
     }
 
     public final int getTimeToCharge() {
         return timeToCharge;
+    }
+
+    public static int getScanCost() {
+        return scanEnergyCost;
     }
 
     public void moveToPosition(PairInput position) {

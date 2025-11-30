@@ -6,9 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.CommandInput;
 import fileio.InputLoader;
 import fileio.SimulationInput;
-import main.simulation.exceptions.NotEnoughBatteryException;
-import main.simulation.exceptions.SimulationAlreadyStartedException;
-import main.simulation.exceptions.SimulationNotStartedException;
+import main.simulation.exceptions.*;
 
 import java.io.NotActiveException;
 
@@ -23,10 +21,12 @@ public class SimulationManager extends Commands {
     }
 
     public void run(InputLoader input, ArrayNode output) {
+        int lastTimestamp = 0;
         for (CommandInput commandInput : input.getCommands()) {
             ObjectNode command = null;
             if (simulation != null) {
-                simulation.runEnviorment();
+                simulation.runEnviorment(lastTimestamp, commandInput.getTimestamp());
+                simulation.getRobot().setTimeToCharge(simulation.getRobot().getTimeToCharge() - (commandInput.getTimestamp() - lastTimestamp));
             }
             try {
                 command = switch (commandInput.getCommand()) {
@@ -42,6 +42,8 @@ public class SimulationManager extends Commands {
                     case "moveRobot" -> moveRobot(commandInput, simulation);
                     case "getEnergyStatus" -> getEnergyStatus(commandInput, simulation);
                     case "rechargeBattery" -> rechargeBattery(commandInput, simulation);
+                    case "changeWeatherConditions" -> changeWeatherConditions(commandInput, simulation);
+                    case "scanObject" -> scanObject(commandInput, simulation);
                     case "endSimulation" -> {
                         ObjectNode aux = endSimulation(commandInput, simulation);
                         simulation = null;
@@ -55,8 +57,13 @@ public class SimulationManager extends Commands {
                 command = e.getError(mapper, commandInput);
             } catch (NotEnoughBatteryException e) {
                 command = e.getError(mapper, commandInput);
+            } catch (RobotChargingException e) {
+                command = e.getError(mapper, commandInput);
+            } catch (ObjectNotFound e) {
+                command = e.getError(mapper, commandInput);
             } catch (NullPointerException _) {}
             output.add(command);
+            lastTimestamp = commandInput.getTimestamp();
         }
     }
 }

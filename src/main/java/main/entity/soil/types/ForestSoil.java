@@ -3,7 +3,7 @@ package main.entity.soil.types;
 import main.entity.Hazardous;
 import main.entity.soil.Soil;
 
-public class ForestSoil extends Soil implements Hazardous {
+public class ForestSoil extends Soil {
     private final double leafLitter;
 
     public ForestSoil(String name, double mass, double nitrogen, double waterRetention,

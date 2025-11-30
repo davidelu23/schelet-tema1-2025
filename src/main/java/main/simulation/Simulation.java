@@ -3,6 +3,7 @@ package main.simulation;
 import fileio.PairInput;
 import fileio.SimulationInput;
 import fileio.TerritorySectionParamsInput;
+import main.entity.air.types.*;
 import main.entity.animal.Animal;
 import main.entity.animal.Status;
 import main.entity.soil.Soil;
@@ -34,7 +35,32 @@ public class Simulation{
         return territory;
     }
 
-    public void runEnviorment() {
+    private void updateEvents(int timePassed) {
+        MountainAir.changeDuration(MountainAir.currentDuration() - timePassed);
+        DesertAir.changeDuration(DesertAir.currentDuration() - timePassed);
+        TemperateAir.changeDuration(TemperateAir.currentDuration() - timePassed);
+        PolarAir.changeDuration(PolarAir.currentDuration() - timePassed);
+        TropicalAir.changeDuration(TropicalAir.currentDuration() - timePassed);
+        if (MountainAir.currentDuration() == 0) {
+            MountainAir.peopleHiking(0);
+        }
+        if (DesertAir.currentDuration() == 0) {
+            DesertAir.desertStorm(false);
+        }
+        if (TemperateAir.currentDuration() == 0) {
+            TemperateAir.newSeason("");
+        }
+        if (PolarAir.currentDuration() == 0) {
+            PolarAir.polarStorm(0);
+        }
+        if (TropicalAir.currentDuration() == 0) {
+            TropicalAir.rainfall(0);
+        }
+    }
+
+
+    public void runEnviorment(int lastTimestamp, int currentTimestamp) {
+        updateEvents(currentTimestamp - lastTimestamp);
         for (int i = 0; i < territory.getHeight(); i++) {
             for (int j = 0; j < territory.getWidth(); j++) {
                 Animal animal = territory.getAnimalAt(i, j);

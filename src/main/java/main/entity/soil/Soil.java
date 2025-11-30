@@ -38,14 +38,6 @@ public abstract class Soil extends Entity implements Hazardous {
         this.organicMatter = organicMatter;
     }
 
-    public Soil(Soil soil) {
-        super(soil.getName(), soil.getMass());
-        this.nitrogen = soil.getNitrogen();
-        this.waterRetention = soil.getWaterRetention();
-        this.soilpH = soil.getSoilpH();
-        this.organicMatter = soil.getOrganicMatter();
-    }
-
     public double getNitrogen() {
         return nitrogen;
     }
@@ -71,7 +63,7 @@ public abstract class Soil extends Entity implements Hazardous {
 
     @JsonIgnore
     public String getSoilQuality() {
-        double quality = normalizeScore(getScore());
+        double quality = getScore();
         if (quality >= 70) {
             return "good";
         } else if (quality >= 40) {

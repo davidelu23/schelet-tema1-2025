@@ -3,7 +3,7 @@ package main.entity.soil.types;
 import main.entity.Hazardous;
 import main.entity.soil.Soil;
 
-public class SwampSoil extends Soil implements Hazardous {
+public class SwampSoil extends Soil {
     private final double waterLogging;
 
     public SwampSoil(String name, double mass, double nitrogen, double waterRetention,

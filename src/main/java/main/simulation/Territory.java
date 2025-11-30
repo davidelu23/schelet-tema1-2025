@@ -42,11 +42,21 @@ public class Territory {
         if (soilInputs == null) return;
         for (SoilInput soilInput : soilInputs) {
             Soil soil = switch (soilInput.getType()) {
-                case "ForestSoil" -> new ForestSoil(soilInput.getName(), soilInput.getMass(), soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(), soilInput.getOrganicMatter(), soilInput.getLeafLitter());
-                case "SwampSoil" -> new SwampSoil(soilInput.getName(), soilInput.getMass(), soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(), soilInput.getOrganicMatter(), soilInput.getWaterLogging());
-                case "TundraSoil" -> new TundraSoil(soilInput.getName(), soilInput.getMass(), soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(), soilInput.getOrganicMatter(), soilInput.getPermafrostDepth());
-                case "DesertSoil" -> new DesertSoil(soilInput.getName(), soilInput.getMass(), soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(), soilInput.getOrganicMatter(), soilInput.getSalinity());
-                case "GrasslandSoil" -> new GrasslandSoil(soilInput.getName(), soilInput.getMass(), soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(), soilInput.getOrganicMatter(), soilInput.getLeafLitter());
+                case "ForestSoil" -> new ForestSoil(soilInput.getName(), soilInput.getMass(),
+                        soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
+                        soilInput.getOrganicMatter(), soilInput.getLeafLitter());
+                case "SwampSoil" -> new SwampSoil(soilInput.getName(), soilInput.getMass(),
+                        soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
+                        soilInput.getOrganicMatter(), soilInput.getWaterLogging());
+                case "TundraSoil" -> new TundraSoil(soilInput.getName(), soilInput.getMass(),
+                        soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
+                        soilInput.getOrganicMatter(), soilInput.getPermafrostDepth());
+                case "DesertSoil" -> new DesertSoil(soilInput.getName(), soilInput.getMass(),
+                        soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
+                        soilInput.getOrganicMatter(), soilInput.getSalinity());
+                case "GrasslandSoil" -> new GrasslandSoil(soilInput.getName(), soilInput.getMass(),
+                        soilInput.getNitrogen(), soilInput.getWaterRetention(), soilInput.getSoilpH(),
+                        soilInput.getOrganicMatter(), soilInput.getRootDensity());
                 default -> null;
             };
 

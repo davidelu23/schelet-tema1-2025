@@ -1,5 +1,6 @@
 package main.entity.soil.types;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import main.entity.Hazardous;
 import main.entity.soil.Soil;
 

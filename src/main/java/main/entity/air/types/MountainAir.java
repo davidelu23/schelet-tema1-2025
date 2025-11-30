@@ -4,6 +4,8 @@ import main.entity.air.Air;
 
 public class MountainAir extends Air {
     private final double altitude;
+    private static int numberOfHikers = 0;
+    private static int duration = 0;
 
     public MountainAir(String name, double mass, double humidity, double temperature,
                        double oxygenLevel, double altitude) {
@@ -12,13 +14,26 @@ public class MountainAir extends Air {
         this.altitude = altitude;
     }
 
-    public double getAltitude() {
+    public final double getAltitude() {
         return altitude;
+    }
+
+    public static void peopleHiking(int amount) {
+        numberOfHikers = amount;
+    }
+
+    public static int currentDuration() {
+        return duration;
+    }
+
+    public static void changeDuration(int value) {
+        duration = Math.max(value, 0);
     }
 
     @Override
     public double getScore() {
         double oxygenFactor = this.getOxygenLevel() - (altitude / 1000 * 0.5);
-        return normalizeScore((oxygenFactor * 2) + (this.getHumidity() * 0.6));
+        double normalAirQuality = normalizeScore((oxygenFactor * 2) + (this.getHumidity() * 0.6));
+        return normalizeScore(normalAirQuality - (numberOfHikers * 0.1));
     }
 }
