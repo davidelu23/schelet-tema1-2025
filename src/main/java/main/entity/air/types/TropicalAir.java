@@ -1,5 +1,7 @@
 package main.entity.air.types;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import main.entity.air.Air;
 
 public class TropicalAir extends Air {
@@ -15,12 +17,24 @@ public class TropicalAir extends Air {
 
     public TropicalAir(final String name, final double mass, final double humidity,
                        final double temperature, final double oxygenLevel, final double co2Level) {
-        super(name, mass, humidity, temperature, oxygenLevel, MAX_SCORE);
+        super(name, mass, humidity, temperature, oxygenLevel, MAX_SCORE, "TropicalAir");
         this.co2Level = co2Level;
     }
 
+    /**
+     * @return the CO2 level.
+     */
+    @JsonIgnore
     public final double getCo2Level() {
         return co2Level;
+    }
+
+    /**
+     * Returns the CO2 level rounded to one decimal place.
+     */
+    @JsonProperty("co2Level")
+    public final double showCo2Level() {
+        return normalizeScore(co2Level);
     }
 
     /**

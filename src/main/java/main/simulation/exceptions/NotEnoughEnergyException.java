@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.CommandInput;
 
-public final class RobotChargingException extends Exception implements Error {
-    public RobotChargingException() { }
+public class NotEnoughEnergyException extends Exception implements Error {
+    public NotEnoughEnergyException() { }
 
     /**
      * Gets the error message.
@@ -17,7 +17,7 @@ public final class RobotChargingException extends Exception implements Error {
     public ObjectNode getError(final ObjectMapper mapper, final CommandInput commandInput) {
         ObjectNode result = mapper.createObjectNode();
         result.put("command", commandInput.getCommand());
-        result.put("message", "ERROR: Robot still charging. Cannot perform action");
+        result.put("message", "ERROR: Not enough energy to perform action");
         result.put("timestamp", commandInput.getTimestamp());
         return result;
     }

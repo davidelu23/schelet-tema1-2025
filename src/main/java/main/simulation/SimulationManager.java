@@ -5,11 +5,15 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.CommandInput;
 import fileio.InputLoader;
+import main.simulation.exceptions.FactNotYetSavedException;
 import main.simulation.exceptions.NotEnoughBatteryException;
-import main.simulation.exceptions.ObjectNotFound;
+import main.simulation.exceptions.NotEnoughEnergyException;
+import main.simulation.exceptions.ObjectNotFoundException;
 import main.simulation.exceptions.RobotChargingException;
 import main.simulation.exceptions.SimulationAlreadyStartedException;
 import main.simulation.exceptions.SimulationNotStartedException;
+import main.simulation.exceptions.SubjectNotYetSavedException;
+import main.simulation.exceptions.WeatherChangeDoesNotAffectException;
 
 public final class SimulationManager extends Commands {
     private static Simulation simulation;
@@ -54,9 +58,15 @@ public final class SimulationManager extends Commands {
                             changeWeatherConditions(commandInput, simulation);
                     case "scanObject" -> scanObject(commandInput, simulation);
                     case "learnFact" -> learnFact(commandInput, simulation);
+                    case "printKnowledgeBase" -> printKnowledgeBase(commandInput, simulation);
+                    case "improveEnvironment" -> improveEnvironment(commandInput, simulation);
                     case "endSimulation" -> {
                         ObjectNode aux = endSimulation(commandInput, simulation);
                         simulation = null;
+                        if (input.getSimulations().get(simIndex)
+                                != input.getSimulations().getLast()) {
+                            simIndex++;
+                        }
                         yield aux;
                     }
                     default -> null;
@@ -69,10 +79,17 @@ public final class SimulationManager extends Commands {
                 command = e.getError(mapper, commandInput);
             } catch (RobotChargingException e) {
                 command = e.getError(mapper, commandInput);
-            } catch (ObjectNotFound e) {
+            } catch (ObjectNotFoundException e) {
                 command = e.getError(mapper, commandInput);
-            } catch (NullPointerException _) {
-            }
+            } catch (SubjectNotYetSavedException e) {
+                command = e.getError(mapper, commandInput);
+            } catch (FactNotYetSavedException e) {
+                command = e.getError(mapper, commandInput);
+            } catch (NotEnoughEnergyException e) {
+                command = e.getError(mapper, commandInput);
+            } catch (WeatherChangeDoesNotAffectException e) {
+                command = e.getError(mapper, commandInput);
+            } catch (NullPointerException _) { }
             output.add(command);
             lastTimestamp = commandInput.getTimestamp();
         }

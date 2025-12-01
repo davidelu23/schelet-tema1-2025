@@ -16,7 +16,7 @@ public class PolarAir extends Air {
     public PolarAir(final String name, final double mass, final double humidity,
                     final double temperature, final double oxygenLevel,
                     final double iceCrystalConcentration) {
-        super(name, mass, humidity, temperature, oxygenLevel, MAX_SCORE);
+        super(name, mass, humidity, temperature, oxygenLevel, MAX_SCORE, "PolarAir");
         this.iceCrystalConcentration = iceCrystalConcentration;
     }
 

@@ -2,7 +2,6 @@ package main.entity.animal.types;
 
 import fileio.PairInput;
 import main.entity.animal.Animal;
-import main.entity.animal.Status;
 import main.simulation.Simulation;
 
 public final class Parasite extends Animal {
@@ -15,30 +14,24 @@ public final class Parasite extends Animal {
     /**
      * Defines the roaming behavior for a Parasite. It prioritizes finding another animal
      * to consume. If none is found, it will look for other resources.
-     *
      * @param simulation The current state of the simulation.
      */
     public void roam(final Simulation simulation) {
         PairInput move = findBestAnimal(simulation);
-        if (move != null) {
-            eatAnimal(simulation.getTerritory().getAnimalAt(move.getX(), move.getY()));
-            simulation.getTerritory().addAnimal(null, getPosition().getX(), getPosition().getY());
-            simulation.getTerritory().addAnimal(this, getPosition().getX(), getPosition().getY());
-            return;
+        if (move == null) {
+            move = findBestWaterAndPlant(simulation);
         }
-        move = findBestWaterAndPlant(simulation);
-        if (move != null) {
-            return;
+        if (move == null) {
+            move = findBestPlant(simulation);
         }
-        move = findBestPlant(simulation);
-        if (move != null) {
-            return;
+        if (move == null) {
+            move = findBestWater(simulation);
         }
-        move = findBestWater(simulation);
-    }
-
-    private void eatAnimal(final Animal animal) {
-        this.setMass(this.getMass() + animal.getMass());
-        setStatus(Status.wellFed);
+        if (move == null) {
+            move = findBestRemainingMove(simulation);
+        }
+        simulation.getTerritory()
+                .removeAnimal(this.getPosition().getX(), this.getPosition().getY());
+        this.setPosition(move);
     }
 }

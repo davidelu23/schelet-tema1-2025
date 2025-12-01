@@ -17,7 +17,7 @@ public class DesertAir extends Air {
     public DesertAir(final String name, final double mass, final double humidity,
                      final double temperature, final double oxygenLevel,
                      final double dustParticles) {
-        super(name, mass, humidity, temperature, oxygenLevel, MAX_SCORE);
+        super(name, mass, humidity, temperature, oxygenLevel, MAX_SCORE, "DesertAir");
         this.dustParticles = dustParticles;
     }
 

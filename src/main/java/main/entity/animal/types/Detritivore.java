@@ -14,22 +14,21 @@ public final class Detritivore extends Animal {
     /**
      * Defines the roaming behavior for a Detritivore. It prioritizes moving towards
      * locations with both water and plants, then just plants, then just water.
-     *
      * @param simulation The current state of the simulation.
      */
     public void roam(final Simulation simulation) {
         PairInput move = findBestWaterAndPlant(simulation);
-
         if (move == null) {
             move = findBestPlant(simulation);
         }
-
         if (move == null) {
             move = findBestWater(simulation);
         }
-
-        if (move != null) {
-            this.setPosition(move);
+        if (move == null) {
+            move = findBestRemainingMove(simulation);
         }
+        simulation.getTerritory()
+                .removeAnimal(this.getPosition().getX(), this.getPosition().getY());
+        this.setPosition(move);
     }
 }

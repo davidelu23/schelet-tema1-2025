@@ -129,7 +129,10 @@ public abstract class Animal extends Entity implements Hazardous {
             }
             Water water = simulation.getTerritory().getWaterAt(x, y);
             Plant plant = simulation.getTerritory().getPlantAt(x, y);
-            if (water != null && plant != null) {
+            if (water == null || plant == null) {
+                continue;
+            }
+            if (water.isScanned() && plant.isScanned()) {
                 double score = simulation.getTerritory().getWaterAt(x, y).getWaterQuality();
                 if (score < bestScore) {
                     bestScore = score;
@@ -164,7 +167,10 @@ public abstract class Animal extends Entity implements Hazardous {
             if (y < 0 || y >= simulation.getTerritory().getHeight()) {
                 continue;
             }
-            if (simulation.getTerritory().getWaterAt(x, y) != null) {
+            if (simulation.getTerritory().getWaterAt(x, y) == null) {
+                continue;
+            }
+            if (simulation.getTerritory().getWaterAt(x, y).isScanned()) {
                 double score = simulation.getTerritory().getWaterAt(x, y).getWaterQuality();
                 if (score < bestScore) {
                     bestScore = score;
@@ -198,7 +204,10 @@ public abstract class Animal extends Entity implements Hazardous {
             if (y < 0 || y >= simulation.getTerritory().getHeight()) {
                 continue;
             }
-            if (simulation.getTerritory().getPlantAt(x, y) != null) {
+            if (simulation.getTerritory().getPlantAt(x, y) == null) {
+                continue;
+            }
+            if (simulation.getTerritory().getPlantAt(x, y).isScanned()) {
                 move.setX(x);
                 move.setY(y);
                 return move;

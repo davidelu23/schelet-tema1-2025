@@ -77,18 +77,21 @@ public final class Simulation {
      */
     public void runEnviorment(final int lastTimestamp, final int currentTimestamp) {
         updateEvents(currentTimestamp - lastTimestamp);
-
-        for (Water water : robot.getWaterInventory()) {
-            if (water.getTimestamp() % 2 == currentTimestamp % 2) {
-                water.updateEnvironment(this);
+        for (int i = 0; i < currentTimestamp - lastTimestamp; i++) {
+            for (Water water : robot.getWaterInventory()) {
+                if (water.getTimestamp() % 2 == currentTimestamp % 2) {
+                    water.updateEnvironment(this);
+                }
             }
-        }
-        for (Plant plant : robot.getPlantInventory()) {
-            plant.updateEnvironment(this);
-        }
-        for (Animal animal : robot.getAnimalInventory()) {
-            if (animal.getTimestamp() % 2 == currentTimestamp % 2) {
-                animal.updateEnvironment(this);
+            for (Plant plant : robot.getPlantInventory()) {
+                plant.updateEnvironment(this);
+            }
+            for (Animal animal : robot.getAnimalInventory()) {
+                if (animal.getTimestamp() % 2 == currentTimestamp % 2) {
+                    animal.updateEnvironment(this);
+                    System.out.println(animal.getPosition().getX()
+                            + " " + animal.getPosition().getY());
+                }
             }
         }
     }

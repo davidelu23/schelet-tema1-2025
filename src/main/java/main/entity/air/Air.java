@@ -27,19 +27,23 @@ public abstract class Air extends Entity {
     private static final int MODERATE_QUALITY_THRESHOLD = 40;
     private static final int PERCENTAGE_MULTIPLIER = 100;
     private static final double TOXICITY_THRESHOLD_FACTOR = 0.8;
+    private static final int DECIMAL_ROUNDING_FACTOR = 10;
 
+    private final String type;
     private double humidity;
     private final double temperature;
     private double oxygenLevel;
     private final int maxScore;
 
     public Air(final String name, final double mass, final double humidity,
-               final double temperature, final double oxygenLevel, final int maxScore) {
+               final double temperature, final double oxygenLevel, final int maxScore,
+               final String type) {
         super(name, mass);
         this.humidity = humidity;
         this.temperature = temperature;
         this.oxygenLevel = oxygenLevel;
         this.maxScore = maxScore;
+        this.type = type;
     }
 
     public Air(final Air air) {
@@ -48,10 +52,26 @@ public abstract class Air extends Entity {
         this.temperature = air.getTemperature();
         this.oxygenLevel = air.getOxygenLevel();
         this.maxScore = air.maxScore;
+        this.type = air.type;
     }
 
+    @JsonIgnore
+    public final String getType() {
+        return type;
+    }
+
+    @JsonIgnore
     public final double getHumidity() {
         return humidity;
+    }
+
+    /**
+     * Returns the humidity rounded to one decimal place.
+     * @return The rounded humidity.
+     */
+    @JsonProperty("humidity")
+    public final double showHumidity() {
+        return (double) Math.round(humidity * DECIMAL_ROUNDING_FACTOR) / DECIMAL_ROUNDING_FACTOR;
     }
 
     /**
@@ -61,15 +81,24 @@ public abstract class Air extends Entity {
      */
     public void updateHumidity(final double value) {
         humidity += value;
-        humidity = normalizeScore(humidity);
     }
 
     public final double getTemperature() {
         return temperature;
     }
 
+    @JsonIgnore
     public final double getOxygenLevel() {
         return oxygenLevel;
+    }
+
+    /**
+     * Returns the oxygen level rounded to one decimal place.
+     * @return The rounded oxygen level.
+     */
+    @JsonProperty("oxygenLevel")
+    public final double showOxygenLevel() {
+        return (double) Math.round(oxygenLevel * DECIMAL_ROUNDING_FACTOR) / DECIMAL_ROUNDING_FACTOR;
     }
 
     /**
@@ -124,7 +153,6 @@ public abstract class Air extends Entity {
      */
     public void updateOxygenLevel(final double oxygenToAdd) {
         this.oxygenLevel += oxygenToAdd;
-        this.oxygenLevel = normalizeScore(this.oxygenLevel);
     }
 
     @Override

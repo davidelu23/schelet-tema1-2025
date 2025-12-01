@@ -16,7 +16,7 @@ public class MountainAir extends Air {
 
     public MountainAir(final String name, final double mass, final double humidity,
                        final double temperature, final double oxygenLevel, final double altitude) {
-        super(name, mass, humidity, temperature, oxygenLevel, MAX_SCORE);
+        super(name, mass, humidity, temperature, oxygenLevel, MAX_SCORE, "MountainAir");
         this.altitude = altitude;
     }
 

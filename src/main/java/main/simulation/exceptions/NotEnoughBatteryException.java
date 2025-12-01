@@ -9,7 +9,6 @@ public final class NotEnoughBatteryException extends Exception implements Error 
 
     /**
      * Gets the error message.
-     * This method is safe to be overridden by subclasses.
      * @param mapper The object mapper.
      * @param commandInput The command input.
      * @return The error message.

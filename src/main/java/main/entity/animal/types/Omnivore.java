@@ -12,9 +12,8 @@ public final class Omnivore extends Animal {
     }
 
     /**
-     * Defines the roaming behavior for an Omnivore. It searches for resources and moves
-     * to the best available location.
-     *
+     * Defines the roaming behavior for an Omnivore. It prioritizes finding locations
+     * with both water and plants, then just plants, then just water.
      * @param simulation The current state of the simulation.
      */
     public void roam(final Simulation simulation) {
@@ -28,11 +27,8 @@ public final class Omnivore extends Animal {
         if (move == null) {
             move = findBestRemainingMove(simulation);
         }
-
-        int oldX = this.getPosition().getX();
-        int oldY = this.getPosition().getY();
-        simulation.getTerritory().removeAnimal(oldX, oldY);
+        simulation.getTerritory()
+                .removeAnimal(this.getPosition().getX(), this.getPosition().getY());
         this.setPosition(move);
-        simulation.getTerritory().addAnimal(this, move.getX(), move.getY());
     }
 }
